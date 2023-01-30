@@ -1,15 +1,53 @@
-import express, { Express, Request, Response } from 'express';
-import dotenv from 'dotenv';
+import express from 'express';
+import cors from 'cors';
+import { initTRPC } from '@trpc/server';
+import * as trpcExpress from '@trpc/server/adapters/express';
+import { z } from 'zod'
 
-dotenv.config();
+const t = initTRPC.create();
 
-const app: Express = express();
-const port = process.env.PORT;
+interface User {
+  id: string;
+  name: string;
+}
+ 
+const userList: User[] = [
+  {
+    id: '1',
+    name: 'KATT',
+  },
+];
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Express + TypeScript Server is running');
-});
+const appRouter = t.router({
+  // Create procedure at path 'hello'
+  hello: t.procedure
+    // using zod schema to validate and infer input values
+    .input(
+      z
+        .object({
+          text: z.string().nullish(),
+        })
+        .nullish(),
+    )
+    .query(({ input }) => {
+      return {
+        greeting: `hello ${input?.text ?? 'world'}`,
+      };
+    }),
+})
 
-app.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`);
+export type AppRouter = typeof appRouter;
+
+const app = express();
+app.use(cors())
+
+app.use(
+  "/trpc",
+  trpcExpress.createExpressMiddleware({
+    router: appRouter
+  })
+)
+
+app.listen(8000, () => {
+  console.log(`[server]: Server is running at http://localhost: 8000`);
 });
