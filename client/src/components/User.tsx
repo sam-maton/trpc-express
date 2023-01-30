@@ -1,11 +1,15 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { trpc } from '../utils/trpc';
 
 export const User = () => {
-  const hello = trpc.hello.useQuery({ text: 'Sam' });
+  const [name, setName] = useState('')
 
-  if (!hello.data) return <div>Loading...</div>;
+  const hello = trpc.hello.useQuery({ text: name });
+
   return (
-    <div>{hello.data.greeting}</div>
+    <div>
+      <input type="text" placeholder="Enter your name" onChange={e => setName(e.target.value)}/>
+      <h1>{hello.data?.greeting}</h1>
+    </div>
   )
 }
