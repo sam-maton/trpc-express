@@ -34,6 +34,11 @@ const appRouter = t.router({
         greeting: `hello ${input?.text ?? 'world'}`,
       };
     }),
+    getUsers: t.procedure.query(() => {
+      return {
+        users: userList
+      }
+    })
 })
 
 export type AppRouter = typeof appRouter;

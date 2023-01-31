@@ -22,7 +22,7 @@ function App() {
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
-        <div className="App">
+        <div className="h-screen">
           <User />
         </div>
       </QueryClientProvider>

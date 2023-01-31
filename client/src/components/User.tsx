@@ -4,12 +4,25 @@ import { trpc } from '../utils/trpc';
 export const User = () => {
   const [name, setName] = useState('')
 
-  const hello = trpc.hello.useQuery({ text: name });
+  const users = trpc.getUsers.useQuery(); 
 
   return (
-    <div>
-      <input type="text" placeholder="Enter your name" onChange={e => setName(e.target.value)}/>
-      <h1>{hello.data?.greeting}</h1>
-    </div>
+    <main className='flex flex-col w-full h-full items-center justify-center gap-5'>
+      <input 
+        type="text"
+        placeholder="Enter new user name"
+        onChange={e => setName(e.target.value)}
+        className="border-2 border-blue-600 rounded-md p-1"
+      />
+      <ul
+        className='list-disc'
+      >
+        {users.data?.users.map((u) => {
+          return(
+            <li key={u.id}>{u.name}</li>
+          )
+        })}
+      </ul>
+    </main>
   )
 }
