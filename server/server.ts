@@ -44,7 +44,10 @@ app.use(cors())
 app.use(
   "/trpc",
   trpcExpress.createExpressMiddleware({
-    router: appRouter
+    router: appRouter,
+    createContext: ({ req, res }) => {
+      return {}
+    }
   })
 )
 
