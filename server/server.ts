@@ -3,7 +3,7 @@ import cors from 'cors';
 import { initTRPC } from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import { z } from 'zod'
-
+import { randomUUID } from "crypto";
 const t = initTRPC.create();
 
 interface User {
@@ -19,9 +19,8 @@ const userList: User[] = [
 ];
 
 const appRouter = t.router({
-  // Create procedure at path 'hello'
+
   hello: t.procedure
-    // using zod schema to validate and infer input values
     .input(
       z
         .object({
@@ -34,10 +33,24 @@ const appRouter = t.router({
         greeting: `hello ${input?.text ?? 'world'}`,
       };
     }),
+    //Get all Users
     getUsers: t.procedure.query(() => {
       return {
         users: userList
       }
+    }),
+    //Add new User
+    addUser: t.procedure.input(
+      z.object({
+        name: z.string()
+      })
+    ).mutation(req => {
+      const { name } = req.input
+      const newUser : User = {
+        id: randomUUID(),
+        name
+      }
+      userList.push(newUser);
     })
 })
 
