@@ -1,14 +1,18 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState} from 'react'
 import { trpc } from '../utils/trpc';
 
-const UsersList = ({data, isLoading}) => {
+interface User {
+  id: string;
+  name: string;
+}
 
+const UsersList = ({users, isLoading}: {isLoading: boolean, users: User[] | undefined}) => {
   if(isLoading){
     return <span>Loading....</span>
   }
   return (
     <ul className="list-disc">
-      {data?.users.map((u) => {
+      {users?.map((u) => {
         return <li key={u.id}>{u.name}</li>;
       })}
     </ul>
@@ -18,6 +22,7 @@ const UsersList = ({data, isLoading}) => {
 export const User = () => {
 
   const getUsersQuery = trpc.getUsers.useQuery();
+
   const addUserMutation = trpc.addUser.useMutation({
     onSuccess: () => {
       getUsersQuery.refetch();
@@ -48,12 +53,7 @@ export const User = () => {
             Add User
           </button>
         </div>
-        {/* <ul className="list-disc">
-          {getUsersQuery.data?.users.map((u) => {
-            return <li key={u.id}>{u.name}</li>;
-          })}
-        </ul> */}
-        <UsersList {...getUsersQuery}/>
+        <UsersList isLoading={getUsersQuery.isLoading} users={getUsersQuery.data?.users}/>
       </section>
     </main>
   );

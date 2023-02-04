@@ -12,10 +12,7 @@ interface User {
 }
  
 const userList: User[] = [
-  {
-    id: '1',
-    name: 'KATT',
-  },
+
 ];
 
 const appRouter = t.router({
